@@ -4,11 +4,11 @@ import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm'
 export class User {
   @PrimaryGeneratedColumn() public id: number
 
-  @Column()
+  @Column() public password: string
+
   @Index('idx_user_username', {
     unique: true,
   })
-  public password: string
-
-  @Column() public username: string
+  @Column()
+  public username: string
 }

@@ -21,14 +21,12 @@ export const typeDefs = gql`
 export const resolvers = {
   Mutation: {
     async createUser(root, args) {
-      console.log(root, args)
       const { username, password } = args
       const repo = getRepository(User)
       const user = repo.create({
         password,
         username,
       })
-      console.log(user)
       return repo.save(user)
     },
   },
