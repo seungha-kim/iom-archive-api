@@ -33,15 +33,6 @@ export class Post {
   public tags: Tag[]
 }
 
-function sanitizeIdentifiedEntity<T extends object>(entity: T): T {
-  if ('id' in entity) {
-    for (const k of Object.keys(entity)) {
-      delete entity[k]
-    }
-  }
-  return entity
-}
-
 interface IPostDraft extends DeepPartial<Post> {
   resources?: Array<DeepPartial<Resource>>
   tags?: Array<DeepPartial<Tag>>
@@ -53,17 +44,21 @@ export class PostRepository extends AbstractRepository<Post> {
   public async createPost(postDraft: IPostDraft) {
     const { title, description, resources, tags, category } = postDraft
     const actualResources = await Promise.all(
-      resources.map(r =>
-        this.manager.preload(Resource, sanitizeIdentifiedEntity(r)),
+      resources.map(
+        r =>
+          r.id
+            ? this.manager.preload(Resource, r)
+            : this.manager.save(Resource, r),
       ),
     )
     const actualTags = await Promise.all(
-      tags.map(t => this.manager.preload(Tag, sanitizeIdentifiedEntity(t))),
+      tags.map(
+        t => (t.id ? this.manager.preload(Tag, t) : this.manager.save(Tag, t)),
+      ),
     )
-    const actualCategory = await this.manager.preload(
-      Category,
-      sanitizeIdentifiedEntity(category),
-    )
+    const actualCategory = await (category.id
+      ? this.manager.preload(Category, category)
+      : this.manager.save(Category, category))
     const post = this.repository.create({
       category: actualCategory,
       description,
