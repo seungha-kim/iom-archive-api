@@ -15,6 +15,8 @@ function convertTrue(arg) {
  * @returns {object} 일부 속성을 대체한 새 객체
  */
 function withTestEnv(env) {
+  if (process.env.NODE_ENV !== 'test') return env
+
   const nonTestEntries = {}
   const testEntries = {}
   const testPattern = /^TEST_(.+)$/

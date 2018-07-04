@@ -1,20 +1,73 @@
 import { gql } from 'apollo-server-express'
-import { getRepository } from 'typeorm'
+import { getCustomRepository, getRepository } from 'typeorm'
+import { Post } from '../entity/Post'
 import { User } from '../entity/User'
+import { MainRepository } from '../tasks'
 
 export const typeDefs = gql`
   type Query {
     user(id: Int): User
-    hello: String
+    hello: String!
+    post(id: Int): Post
   }
 
   type Mutation {
-    createUser(username: String, password: String): User
+    createUser(username: String!, password: String!): User
+    createPost(post: PostInput!): Post
   }
 
   type User {
+    id: Int!
+    username: String!
+  }
+
+  type Category {
+    id: Int!
+    name: String
+  }
+
+  input CategoryInput {
     id: Int
-    username: String
+    name: String
+  }
+
+  type Resource {
+    id: Int!
+    name: String
+    resourceUrl: String
+  }
+
+  input ResourceInput {
+    id: Int
+    name: String
+    resourceUrl: String
+  }
+
+  type Tag {
+    id: Int!
+    name: String
+  }
+
+  input TagInput {
+    id: Int
+    name: String
+  }
+
+  input PostInput {
+    title: String!
+    description: String!
+    category: CategoryInput!
+    resources: [ResourceInput!]
+    tags: [TagInput!]
+  }
+
+  type Post {
+    id: Int!
+    title: String!
+    description: String!
+    category: Category!
+    resources: [Resource!]
+    tags: [Tag!]
   }
 `
 
@@ -29,11 +82,23 @@ export const resolvers = {
       })
       return repo.save(user)
     },
+    async createPost(root, args) {
+      const { post } = args
+      const repo = getCustomRepository(MainRepository)
+      return repo.createPost(post)
+    },
   },
   Query: {
     hello: () => 'world',
-    user(id: number) {
+    user(root, args) {
+      const { id } = args
       return getRepository(User).findOne(id)
+    },
+    post(root, args) {
+      const { id } = args
+      return getRepository(Post).findOne(id, {
+        relations: ['category', 'resources', 'tags'],
+      })
     },
   },
 }

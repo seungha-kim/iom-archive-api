@@ -1,21 +1,22 @@
 import { createConnection, getCustomRepository, getRepository } from 'typeorm'
-import { PostRepository } from '../Post'
+import { MainRepository } from './tasks'
+
+let conn
+
+beforeAll(async () => {
+  conn = await createConnection()
+  await conn.dropDatabase()
+  await conn.synchronize()
+})
+
+afterAll(async () => {
+  await conn.dropDatabase()
+  await conn.close()
+})
 
 describe('PostRepository', () => {
-  let conn
-  beforeAll(async () => {
-    conn = await createConnection()
-    await conn.dropDatabase()
-    await conn.synchronize()
-  })
-
-  afterAll(async () => {
-    await conn.dropDatabase()
-    await conn.close()
-  })
-
   test('createPost with fresh relations', async () => {
-    const repo = getCustomRepository(PostRepository)
+    const repo = getCustomRepository(MainRepository)
     const post = await repo.createPost({
       title: 'haha',
       description: 'hahahaha',
@@ -28,12 +29,16 @@ describe('PostRepository', () => {
       category: {
         name: 'Food',
       },
-      tags: [],
+      tags: [
+        {
+          name: 'Hello',
+        },
+      ],
     })
     expect(post.title).toBe('haha')
     expect(post.description).toBe('hahahaha')
     expect(post.resources[0].name).toBe('haha')
     expect(post.category.name).toBe('Food')
-    expect(post.tags.length).toBe(0)
+    expect(post.tags.length).toBe(1)
   })
 })
