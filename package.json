@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "debug:watch": "nodemon -x npm run debug",
+    "debug": "node --inspect ./node_modules/.bin/ts-node ./src/index.ts",
     "start": "ts-node src/index.ts",
     "lint": "prettier \"./src/**/*.{ts,tsx}\"",
     "typeorm": "ts-node ./node_modules/.bin/typeorm",
