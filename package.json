@@ -10,7 +10,8 @@
     "lint": "prettier \"./src/**/*.{ts,tsx}\"",
     "typeorm": "ts-node ./node_modules/.bin/typeorm",
     "doc": "typedoc --out docs ./src",
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "nodemon --delay=1 -x npm run test"
   },
   "jest": {
     "transform": {
