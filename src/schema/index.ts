@@ -73,7 +73,7 @@ export const typeDefs = gql`
 
 export const resolvers = {
   Mutation: {
-    async createUser(root, args) {
+    async createUser(root: any, args: any) {
       const { username, password } = args
       const repo = getRepository(User)
       const user = repo.create({
@@ -82,7 +82,7 @@ export const resolvers = {
       })
       return repo.save(user)
     },
-    async createPost(root, args) {
+    async createPost(root: any, args: any) {
       const { post } = args
       const repo = getCustomRepository(MainRepository)
       return repo.createPost(post)
@@ -90,11 +90,11 @@ export const resolvers = {
   },
   Query: {
     hello: () => 'world',
-    user(root, args) {
+    user(root: any, args: any) {
       const { id } = args
       return getRepository(User).findOne(id)
     },
-    post(root, args) {
+    post(root: any, args: any) {
       const { id } = args
       return getRepository(Post).findOne(id, {
         relations: ['category', 'resources', 'tags'],

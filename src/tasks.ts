@@ -38,11 +38,13 @@ export class MainRepository {
 
   private preloadOrSave<E extends IEntityWithId>(
     entityClass: new () => E
-  ): (e: DeepPartial<E>) => Promise<E> {
-    return entity => {
-      return entity.id
-        ? this.manager.findOne(entityClass, entity.id as any)
-        : this.manager.save(this.manager.create(entityClass, entity))
+  ): (e: DeepPartial<E> | undefined) => Promise<E | undefined> {
+    return async entity => {
+      return entity === undefined
+        ? entity
+        : entity.id
+          ? this.manager.findOne(entityClass, entity.id as any)
+          : this.manager.save(this.manager.create(entityClass, entity))
     }
   }
 }
