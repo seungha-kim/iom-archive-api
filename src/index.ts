@@ -1,22 +1,13 @@
-import { ApolloServer, gql } from 'apollo-server-express'
-import * as express from 'express'
 import { createConnection } from 'typeorm'
-import { resolvers, typeDefs } from './schema'
+import { app, server } from './server'
 
-const PORT = 3030
-const app = express()
-const server = new ApolloServer({
-  resolvers,
-  typeDefs,
-})
-
-server.applyMiddleware({ app })
+const PORT = process.env.PORT || 3030
 
 async function init() {
   await createConnection()
   app.listen({ port: PORT }, () => {
     console.log(
-      `🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`,
+      `🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`
     )
   })
 }

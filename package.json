@@ -11,7 +11,7 @@
     "typeorm": "ts-node ./node_modules/.bin/typeorm",
     "doc": "typedoc --out docs ./src",
     "test": "jest",
-    "test:watch": "nodemon --delay=1 -x npm run test"
+    "test:watch": "nodemon -x npm run test"
   },
   "jest": {
     "transform": {
@@ -38,7 +38,8 @@
     "graphql": "^0.13.2",
     "mysql2": "^1.5.3",
     "reflect-metadata": "^0.1.10",
-    "typeorm": "0.2.7"
+    "typeorm": "0.2.7",
+    "graphql-tools": "^3.0.4"
   },
   "devDependencies": {
     "@types/graphql": "^0.13.1",

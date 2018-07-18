@@ -9,12 +9,12 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm'
-import { Category } from './Category'
-import { Resource } from './Resource'
-import { Tag } from './Tag'
+import Category from './Category'
+import Resource from './Resource'
+import Tag from './Tag'
 
 @Entity()
-export class Post {
+export default class Post {
   @PrimaryGeneratedColumn() public id: number
 
   @Column() public title: string

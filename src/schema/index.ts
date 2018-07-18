@@ -1,8 +1,8 @@
 import { gql } from 'apollo-server-express'
-import { getCustomRepository, getRepository } from 'typeorm'
-import { Post } from '../entity/Post'
-import { User } from '../entity/User'
-import { MainRepository } from '../tasks'
+import { makeExecutableSchema } from 'graphql-tools'
+import { getCustomRepository } from 'typeorm'
+import PostRepository from '../repository/PostRepository'
+import UserRepository from '../repository/UserRepository'
 
 export const typeDefs = gql`
   type Query {
@@ -75,30 +75,29 @@ export const resolvers = {
   Mutation: {
     async createUser(root: any, args: any) {
       const { username, password } = args
-      const repo = getRepository(User)
-      const user = repo.create({
-        password,
-        username,
-      })
-      return repo.save(user)
+      const repo = getCustomRepository(UserRepository)
+      return repo.createUser(username, password)
     },
     async createPost(root: any, args: any) {
       const { post } = args
-      const repo = getCustomRepository(MainRepository)
+      const repo = getCustomRepository(PostRepository)
       return repo.createPost(post)
     },
   },
   Query: {
     hello: () => 'world',
-    user(root: any, args: any) {
-      const { id } = args
-      return getRepository(User).findOne(id)
-    },
+    // user(root: any, args: any) {
+    //   const { id } = args
+    //   return getRepository(User).findOne(id)
+    // },
     post(root: any, args: any) {
       const { id } = args
-      return getRepository(Post).findOne(id, {
-        relations: ['category', 'resources', 'tags'],
-      })
+      return getCustomRepository(PostRepository).findOne(id)
     },
   },
 }
+
+export default makeExecutableSchema({
+  typeDefs,
+  resolvers,
+})
